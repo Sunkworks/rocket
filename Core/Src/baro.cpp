@@ -1,5 +1,7 @@
 #include "baro.h"
 
+int32_t BMP280::TemperatureTrimming::GetCompensatedTemperature(
+    int32_t uncompensated_temperature) {}
 Barometer::Barometer(I2C_HandleTypeDef *hi2c, uint16_t i2c_address)
     : hi2c_(hi2c), address_(i2c_address) {}
 
@@ -32,8 +34,14 @@ void Barometer::SetMode(BMP280::PowerMode new_mode) {
 
 void Barometer::Init() {
   SoftReset();
+  InitTemperatureTrimming();
   SetMode(mode_);
   EnablePressureReading();
+  EnableTemperatureReading();
+}
+
+void Barometer::InitTemperatureTrimming() {
+  // Define functions that read LSB/MSB pair from registers for trimming.
 }
 
 void Barometer::EnablePressureReading() {
@@ -42,13 +50,29 @@ void Barometer::EnablePressureReading() {
   WriteRegister(BMP280::kCtrlMeas, power_mode);
 }
 
+void Barometer::EnableTemperatureReading() {
+  uint8_t current_mode = ReadRegister(BMP280::kCtrlMeas);
+  current_mode = current_mode | (temperature_oversampling_ << 5);
+  WriteRegister(BMP280::kCtrlMeas, current_mode);
+}
+
 uint32_t Barometer::GetPressure() {
   uint8_t pressure[3];
-  uint8_t result;
+  uint32_t result;
   uint8_t length = pressure_oversampling_ != 0b001 ? 3 : 2;
   MultiRead(BMP280::kPressureMSB, pressure, length);
-  result = pressure[0] << 8 + pressure[1];
+  result = (pressure[0] << 8) + pressure[1];
   // TODO: add support for oversampling
+  return result;
+}
+
+uint32_t Barometer::GetTemperature() {
+  uint8_t temperature[3];
+  uint32_t result;
+  uint8_t length = temperature_oversampling_ != 0b001 ? 3 : 2;
+  MultiRead(BMP280::kTempMSB, temperature, length);
+  // TODO: add support for oversampling
+  result = (temperature[0] << 8) + temperature[1];
   return result;
 }
 

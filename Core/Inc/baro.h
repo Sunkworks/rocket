@@ -4,10 +4,12 @@
 #include <cstdint>
 #include "stm32l4xx_hal.h"
 
-using std::uint8_t;
-
 namespace BMP280 {
+
 typedef enum : uint8_t {
+  kT1LSB = 0x88,
+  kT2LSB = 0x8B,
+  KT3LSB = 0x8C,
   kID = 0xD0,
   kReset = 0xE0,
   kStatus = 0xF3,
@@ -18,11 +20,20 @@ typedef enum : uint8_t {
   kPressureXLSB = 0xF9,
   kTempMSB = 0xFA,
 } Register;
+
 typedef enum : uint8_t {
   kSleepMode = 0,
   kForcedMode = 0b01,
   kNormalMode = 0b11,
 } PowerMode;
+
+struct TemperatureTrimming {
+  uint16_t T1;
+  int16_t T2;
+  int16_t T3;
+  int32_t GetCompensatedTemperature(int32_t uncompensated_temperature);
+};
+
 }  // namespace BMP280
 
 class Barometer {
@@ -32,9 +43,12 @@ class Barometer {
   uint8_t ReadRegister(uint8_t reg);
   void MultiRead(uint8_t first_reg, uint8_t *data, uint8_t length);
   void Init();
+  void InitTemperatureTrimming();
   void SetMode(BMP280::PowerMode new_mode);
   void EnablePressureReading();
+  void EnableTemperatureReading();
   uint32_t GetPressure();
+  uint32_t GetTemperature();
   void SoftReset();
 
  private:
@@ -47,11 +61,7 @@ class Barometer {
   uint8_t pressure_oversampling_ = 0b001;
   uint8_t temperature_oversampling_ = 0b001;
   BMP280::PowerMode mode_ = BMP280::kNormalMode;
-};
-
-struct BaroConfig {
-  I2C_HandleTypeDef *hi2c;
-  uint8_t address;
+  struct BMP280::TemperatureTrimming temp_compensator;
 };
 
 #endif /* BARO_H_ */

@@ -111,7 +111,8 @@ int main(void) {
   uint8_t config = baro.ReadRegister(BMP280::kConfig);
   uint8_t pressure_lsb = baro.ReadRegister(BMP280::kPressureLSB);
   uint8_t pressure_msb = baro.ReadRegister(BMP280::kPressureMSB);
-  baro.GetPressure();
+  auto pressure = baro.GetPressure();
+  auto temperature = baro.GetTemperature();
   //  baro.GetPressure();
   while (1) {
     /* USER CODE END WHILE */
