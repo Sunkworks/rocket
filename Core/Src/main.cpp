@@ -103,14 +103,15 @@ int main(void) {
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   Barometer baro{&hi2c1, kBarometerAddress};
+  baro.Init();
   uint8_t id = baro.ReadRegister(BMP280::kID);
-  baro.EnablePressureReading();
   HAL_Delay(100);
   uint8_t status = baro.ReadRegister(BMP280::kStatus);
   uint8_t ctrl_meas = baro.ReadRegister(BMP280::kCtrlMeas);
   uint8_t config = baro.ReadRegister(BMP280::kConfig);
   uint8_t pressure_lsb = baro.ReadRegister(BMP280::kPressureLSB);
   uint8_t pressure_msb = baro.ReadRegister(BMP280::kPressureMSB);
+  baro.GetPressure();
   //  baro.GetPressure();
   while (1) {
     /* USER CODE END WHILE */
