@@ -42,6 +42,11 @@ void Barometer::Init() {
 
 void Barometer::InitTemperatureTrimming() {
   // Define functions that read LSB/MSB pair from registers for trimming.
+  // TODO: figure out if these are correct
+  temp_compensator_.T1 = GetUnsignedTrimmingValue(BMP280::kT1LSB);
+  temp_compensator_.T2 = GetTrimmingValue(BMP280::kT2LSB);
+  temp_compensator_.T3 = GetTrimmingValue(BMP280::kT3LSB);
+  ;
 }
 
 void Barometer::EnablePressureReading() {
@@ -79,4 +84,15 @@ uint32_t Barometer::GetTemperature() {
 void Barometer::SoftReset() {
   WriteRegister(BMP280::kReset, kSoftResetWord_);
   HAL_Delay(kStartupTime_);
+}
+
+int16_t Barometer::GetTrimmingValue(uint8_t lsb_reg) {
+  uint8_t temp[2];
+  MultiRead(lsb_reg, temp, 2);
+  return (temp[1] << 8) + temp[0];
+}
+uint16_t Barometer::GetUnsignedTrimmingValue(uint8_t lsb_reg) {
+  uint8_t temp[2];
+  MultiRead(lsb_reg, temp, 2);
+  return (temp[1] << 8) + temp[0];
 }

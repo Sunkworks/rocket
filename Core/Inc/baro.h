@@ -9,7 +9,7 @@ namespace BMP280 {
 typedef enum : uint8_t {
   kT1LSB = 0x88,
   kT2LSB = 0x8B,
-  KT3LSB = 0x8C,
+  kT3LSB = 0x8C,
   kID = 0xD0,
   kReset = 0xE0,
   kStatus = 0xF3,
@@ -61,7 +61,9 @@ class Barometer {
   uint8_t pressure_oversampling_ = 0b001;
   uint8_t temperature_oversampling_ = 0b001;
   BMP280::PowerMode mode_ = BMP280::kNormalMode;
-  struct BMP280::TemperatureTrimming temp_compensator;
+  struct BMP280::TemperatureTrimming temp_compensator_;
+  int16_t GetTrimmingValue(uint8_t lsb_reg);
+  uint16_t GetUnsignedTrimmingValue(uint8_t lsb_reg);
 };
 
 #endif /* BARO_H_ */
