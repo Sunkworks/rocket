@@ -38,11 +38,22 @@ typedef enum : uint8_t {
   kNormalMode = 0b11,
 } PowerMode;
 
-struct TemperatureTrimming {
+struct ReadoutTrimming {
   uint16_t T1_;
   int16_t T2_;
   int16_t T3_;
+  uint16_t P1_;
+  int16_t P2_;
+  int16_t P3_;
+  int16_t P4_;
+  int16_t P5_;
+  int16_t P6_;
+  int16_t P7_;
+  int16_t P8_;
+  int16_t P9_;
   int32_t GetCompensatedTemperature(int32_t uncomp_temp);
+  int32_t GetCompensatedPressure(int32_t uncomp_pressure);
+  int32_t t_fine_;
 };
 
 }  // namespace BMP280
@@ -54,11 +65,11 @@ class Barometer {
   uint8_t ReadRegister(uint8_t reg);
   void MultiRead(uint8_t first_reg, uint8_t *data, uint8_t length);
   void Init();
-  void InitTemperatureTrimming();
+  void InitTrimmingVariables();
   void SetMode(BMP280::PowerMode new_mode);
   void EnablePressureReading();
   void EnableTemperatureReading();
-  uint32_t GetPressure();
+  int32_t GetPressure();
   int32_t GetTemperature();
   void SoftReset();
 
@@ -72,7 +83,7 @@ class Barometer {
   uint8_t pressure_oversampling_ = 0b001;
   uint8_t temperature_oversampling_ = 0b001;
   BMP280::PowerMode mode_ = BMP280::kNormalMode;
-  struct BMP280::TemperatureTrimming temp_compensator_;
+  struct BMP280::ReadoutTrimming readout_compensator_;
   int16_t GetTrimmingValue(uint8_t lsb_reg);
   uint16_t GetUnsignedTrimmingValue(uint8_t lsb_reg);
 };
