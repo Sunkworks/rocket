@@ -8,5 +8,12 @@ Read the style guide for more info on naming and such.
 The style guide: https://google.github.io/styleguide/cppguide.html
 
 ## Current code progress
-- [ ] The barometer interaction is being worked on (it doesn't work yet). 
-- [x] The project has been converted to C++  
+* [x] The project has been converted to C++  
+* [x] 16-bit pressure and temperature readouts working  
+* [ ] Oversampling support for pressure and temperature  
+* [ ] Proper filter settings for BMP280  
+* [ ] Interrupt based sampling for BMP280  
+* [ ] IMU  
+* [ ] LoRa communication with ground station  
+	- [ ] Remote launch  
+	- [ ] Remote telemetry  
