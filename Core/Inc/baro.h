@@ -8,8 +8,17 @@ namespace BMP280 {
 
 typedef enum : uint8_t {
   kT1LSB = 0x88,
-  kT2LSB = 0x8B,
+  kT2LSB = 0x8A,
   kT3LSB = 0x8C,
+  kP1LSB = 0x8E,
+  kP2LSB = 0x90,
+  kP3LSB = 0x92,
+  kP4LSB = 0x94,
+  kP5LSB = 0x96,
+  kP6LSB = 0x98,
+  kP7LSB = 0x9A,
+  kP8LSB = 0x9C,
+  kP9LSB = 0x9E,
   kID = 0xD0,
   kReset = 0xE0,
   kStatus = 0xF3,
@@ -19,6 +28,8 @@ typedef enum : uint8_t {
   kPressureLSB = 0xF8,
   kPressureXLSB = 0xF9,
   kTempMSB = 0xFA,
+  kTempLSB = 0xFB,
+  kTempXLSB = 0xFC,
 } Register;
 
 typedef enum : uint8_t {
@@ -28,10 +39,10 @@ typedef enum : uint8_t {
 } PowerMode;
 
 struct TemperatureTrimming {
-  uint16_t T1;
-  int16_t T2;
-  int16_t T3;
-  int32_t GetCompensatedTemperature(int32_t uncompensated_temperature);
+  uint16_t T1_;
+  int16_t T2_;
+  int16_t T3_;
+  int32_t GetCompensatedTemperature(int32_t uncomp_temp);
 };
 
 }  // namespace BMP280
@@ -48,7 +59,7 @@ class Barometer {
   void EnablePressureReading();
   void EnableTemperatureReading();
   uint32_t GetPressure();
-  uint32_t GetTemperature();
+  int32_t GetTemperature();
   void SoftReset();
 
  private:

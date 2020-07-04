@@ -1,7 +1,22 @@
 #include "baro.h"
-
+// uncomp_temp: 16-bit temperature readout
+// Returns: temperature celsius. Two last decimal digits are fraction
+// See sec. 3.11.3 of datasheet for more details.
 int32_t BMP280::TemperatureTrimming::GetCompensatedTemperature(
-    int32_t uncompensated_temperature) {}
+    int32_t uncomp_temp) {
+  int32_t var1, var2, comp_temp, t_fine;
+  uncomp_temp = uncomp_temp << 4;
+  var1 = ((((uncomp_temp >> 3) - ((int32_t)T1_ << 1))) * ((int32_t)T2_)) >> 11;
+  var2 = (((((uncomp_temp >> 4) - ((int32_t)T1_)) *
+            ((uncomp_temp >> 4) - ((int32_t)T1_))) >>
+           12) *
+          ((int32_t)T3_)) >>
+         14;
+  t_fine = var1 + var2;
+  comp_temp = (t_fine * 5 + 128) >> 8;
+  return comp_temp;
+}
+
 Barometer::Barometer(I2C_HandleTypeDef *hi2c, uint16_t i2c_address)
     : hi2c_(hi2c), address_(i2c_address) {}
 
@@ -43,9 +58,11 @@ void Barometer::Init() {
 void Barometer::InitTemperatureTrimming() {
   // Define functions that read LSB/MSB pair from registers for trimming.
   // TODO: figure out if these are correct
-  temp_compensator_.T1 = GetUnsignedTrimmingValue(BMP280::kT1LSB);
-  temp_compensator_.T2 = GetTrimmingValue(BMP280::kT2LSB);
-  temp_compensator_.T3 = GetTrimmingValue(BMP280::kT3LSB);
+  temp_compensator_.T1_ = GetUnsignedTrimmingValue(BMP280::kT1LSB);
+  temp_compensator_.T2_ = GetTrimmingValue(BMP280::kT2LSB);
+  temp_compensator_.T3_ = GetTrimmingValue(BMP280::kT3LSB);
+  auto x = GetUnsignedTrimmingValue(BMP280::kP1LSB);
+  auto y = GetTrimmingValue(BMP280::kP8LSB);
   ;
 }
 
@@ -71,14 +88,15 @@ uint32_t Barometer::GetPressure() {
   return result;
 }
 
-uint32_t Barometer::GetTemperature() {
+int32_t Barometer::GetTemperature() {
   uint8_t temperature[3];
-  uint32_t result;
+  int32_t result;
   uint8_t length = temperature_oversampling_ != 0b001 ? 3 : 2;
   MultiRead(BMP280::kTempMSB, temperature, length);
   // TODO: add support for oversampling
   result = (temperature[0] << 8) + temperature[1];
-  return result;
+  //  return result;
+  return temp_compensator_.GetCompensatedTemperature(result);
 }
 
 void Barometer::SoftReset() {
