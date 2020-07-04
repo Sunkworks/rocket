@@ -1,4 +1,4 @@
-# Sunkworks rocket version 1
+# Sunkworks ~~rocket~~ missile version 1
 It needs a better name.
 
 ## Coding style
