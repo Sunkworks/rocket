@@ -14,6 +14,6 @@ The style guide: https://google.github.io/styleguide/cppguide.html
 * [ ] Proper filter settings for BMP280  
 * [ ] Interrupt based sampling for BMP280  
 * [ ] IMU  
-* [ ] LoRa communication with ground station  
+* [ ] LoRa communication with ground station :satellite: :rocket:   
 	- [ ] Remote launch  
 	- [ ] Remote telemetry  
