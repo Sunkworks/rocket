@@ -69,6 +69,7 @@ class Barometer {
   void SetMode(BMP280::PowerMode new_mode);
   void EnablePressureReading();
   void EnableTemperatureReading();
+  void UpdateValues();
   int32_t GetPressure();
   int32_t GetTemperature();
   void SoftReset();
@@ -86,6 +87,7 @@ class Barometer {
   struct BMP280::ReadoutTrimming readout_compensator_;
   int16_t GetTrimmingValue(uint8_t lsb_reg);
   uint16_t GetUnsignedTrimmingValue(uint8_t lsb_reg);
+  int32_t pressure_, temperature_;
 };
 
 #endif /* BARO_H_ */

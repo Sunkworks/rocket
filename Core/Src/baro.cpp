@@ -104,27 +104,24 @@ void Barometer::EnableTemperatureReading() {
   WriteRegister(BMP280::kCtrlMeas, current_mode);
 }
 
-// TODO: decouple reading from GetPressure
-int32_t Barometer::GetPressure() {
-  uint8_t pressure[3];
-  int32_t result;
-  uint8_t length = pressure_oversampling_ != 0b001 ? 3 : 2;
-  MultiRead(BMP280::kPressureMSB, pressure, length);
-  result = (pressure[0] << 8) + pressure[1];
+void Barometer::UpdateValues() {
   // TODO: add support for oversampling
-  return readout_compensator_.GetCompensatedPressure(result);
+  uint8_t data[3], length;
+  int32_t temp;
+  // TODO: Refactor common steps between temperature and pressure.
+  length = temperature_oversampling_ != 0b001 ? 3 : 2;
+  MultiRead(BMP280::kTempMSB, data, length);
+  temp = (data[0] << 8) + data[1];
+  temperature_ = readout_compensator_.GetCompensatedTemperature(temp);
+  length = pressure_oversampling_ != 0b001 ? 3 : 2;
+  MultiRead(BMP280::kPressureMSB, data, length);
+  temp = (data[0] << 8) + data[1];
+  pressure_ = readout_compensator_.GetCompensatedPressure(temp);
 }
 
-int32_t Barometer::GetTemperature() {
-  uint8_t temperature[3];
-  int32_t result;
-  uint8_t length = temperature_oversampling_ != 0b001 ? 3 : 2;
-  MultiRead(BMP280::kTempMSB, temperature, length);
-  // TODO: add support for oversampling
-  result = (temperature[0] << 8) + temperature[1];
-  //  return result;
-  return readout_compensator_.GetCompensatedTemperature(result);
-}
+int32_t Barometer::GetPressure() { return pressure_; }
+
+int32_t Barometer::GetTemperature() { return temperature_; }
 
 void Barometer::SoftReset() {
   WriteRegister(BMP280::kReset, kSoftResetWord_);
