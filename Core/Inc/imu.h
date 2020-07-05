@@ -20,9 +20,11 @@ typedef enum : uint8_t {
   kAccelXOutLSB = 0x3C,
   kAccelZOutMSB = 0x3F,
   kAccelZOutLSB = 0x40,
-  kWhoAmI = 117,
+  kGyroXOutMSB = 0x43,
+  kPwrMgmt1 = 0x6B,
+  kPwrMgmt2 = 0x6C,
+  kWhoAmI = 0x75,
 } Register;
-
 }
 
 enum Axis : uint8_t {
@@ -31,6 +33,15 @@ enum Axis : uint8_t {
   kZ = 2,
 };
 
+struct Vec {
+  int16_t x_;
+  int16_t y_;
+  int16_t z_;
+  void SetFromSensorReadout(uint8_t *data);
+};
+
+int16_t SplitBytesToInt16(uint8_t *data);
+
 class IMU {
  public:
   IMU(I2C_HandleTypeDef *hi2c, uint16_t i2c_address);
@@ -38,12 +49,16 @@ class IMU {
   uint8_t ReadRegister(uint8_t reg);
   void MultiRead(uint8_t first_reg, uint8_t *data, uint8_t length);
   void UpdateValues();
-  void GetAccelZ();
+  struct Vec GetAcceleration();
+  struct Vec GetRotation();
 
  private:
   I2C_HandleTypeDef *hi2c_;
   uint16_t address_;
   const uint32_t kTimeout_ = 10000;
+  struct Vec accel_;
+  struct Vec gyro_;
+  struct Vec magneto_;
   // accelerometer variables: scale, frequency etc
   // store variables privately, to decouple update and getting
 };

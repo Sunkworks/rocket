@@ -23,9 +23,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include <stdint.h>
 #include "baro.h"
 #include "imu.h"
-#include <stdint.h>
 
 /* USER CODE END Includes */
 
@@ -121,8 +121,9 @@ int main(void) {
 
   uint8_t accel_h, accel_l;
   while (1) {
-	  accel_h = imu.ReadRegister(MPU9250::kAccelZOutMSB);
-	  accel_l = imu.ReadRegister(MPU9250::kAccelZOutLSB);
+    imu.UpdateValues();
+    //    accel_h = imu.ReadRegister(MPU9250::kAccelZOutMSB);
+    //    accel_l = imu.ReadRegister(MPU9250::kAccelZOutLSB);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
