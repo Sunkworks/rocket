@@ -18,7 +18,10 @@ The style guide: https://google.github.io/styleguide/cppguide.html
 * [ ] Oversampling support for pressure and temperature  
 * [ ] Proper filter settings for BMP280  
 * [ ] Interrupt based sampling for BMP280  
-* [ ] IMU  
+* [ ] IMU :running:
+	- [x] Basic interface to accelerometer and gyroscope data
+	- [ ] Support for different configs (resolution, range, power mode etc) :gear:  
+	- [ ] Self-tests
 * [ ] LoRa communication with ground station :satellite: :rocket:   
 	- [ ] Remote launch  
 	- [ ] Remote telemetry  
