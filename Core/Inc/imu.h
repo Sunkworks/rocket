@@ -58,9 +58,7 @@ class IMU {
   const uint32_t kTimeout_ = 10000;
   struct Vec accel_;
   struct Vec gyro_;
-  struct Vec magneto_;
   // accelerometer variables: scale, frequency etc
-  // store variables privately, to decouple update and getting
 };
 
 #endif /* INC_IMU_H_ */

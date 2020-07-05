@@ -40,9 +40,12 @@ void IMU::UpdateValues() {
   ;
 }
 
+// TODO: return in fixed unit (m/s^2)
 struct Vec IMU::GetAcceleration() {
   return accel_;
 }
+
+// TODO: make it return in a fixed unit (eg. dps)
 struct Vec IMU::GetRotation() {
   return gyro_;
 }
