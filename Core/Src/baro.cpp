@@ -44,8 +44,6 @@ Barometer::Barometer(I2C_HandleTypeDef *hi2c, uint16_t i2c_address)
 void Barometer::WriteRegister(uint8_t reg, uint8_t value) {
   uint8_t test[2] = {reg, value};
   HAL_I2C_Master_Transmit(hi2c_, address_, test, 2, kTimeout_);
-  //  HAL_I2C_Master_Transmit(hi2c_, address_, &reg, 1, kTimeout_);
-  //  HAL_I2C_Master_Transmit(hi2c_, address_, &value, 1, kTimeout_);
 }
 
 uint8_t Barometer::ReadRegister(uint8_t reg) {
@@ -106,6 +104,7 @@ void Barometer::EnableTemperatureReading() {
   WriteRegister(BMP280::kCtrlMeas, current_mode);
 }
 
+// TODO: decouple reading from GetPressure
 int32_t Barometer::GetPressure() {
   uint8_t pressure[3];
   int32_t result;

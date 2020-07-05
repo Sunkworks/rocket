@@ -23,7 +23,8 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-#include <baro.h>
+#include "baro.h"
+#include "imu.h"
 #include <stdint.h>
 
 /* USER CODE END Includes */
@@ -72,6 +73,7 @@ static void MX_I2C1_Init(void);
 int main(void) {
   /* USER CODE BEGIN 1 */
   const uint16_t kBarometerAddress = 0x77 << 1;
+  const uint16_t kIMUAddress = 0x68 << 1;
 
   /* USER CODE END 1 */
 
@@ -112,9 +114,15 @@ int main(void) {
   uint8_t pressure_lsb = baro.ReadRegister(BMP280::kPressureLSB);
   uint8_t pressure_msb = baro.ReadRegister(BMP280::kPressureMSB);
   auto temperature = baro.GetTemperature();
-  auto pressure = baro.GetPressure();
+  auto pressure = baro.GetPressure() >> 8;
+  IMU imu{&hi2c1, kIMUAddress};
+  uint8_t whoami = imu.ReadRegister(MPU9250::kWhoAmI);
   //  baro.GetPressure();
+
+  uint8_t accel_h, accel_l;
   while (1) {
+	  accel_h = imu.ReadRegister(MPU9250::kAccelZOutMSB);
+	  accel_l = imu.ReadRegister(MPU9250::kAccelZOutLSB);
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
